@@ -1,0 +1,507 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmola Official Website</title>
+    
+    <style>
+        /* --- 1. Design Tokens & Grid Background --- */
+        :root {
+            --bg-color: #faf9f5;
+            --bg-color-rgba: rgba(250, 249, 245, 0.85);
+            --text-color: #111111;
+            --text-muted: #888888;
+            --accent-line: rgba(231, 76, 60, 0.4);
+            --font-main: "Helvetica Neue", Helvetica, Arial, "Yu Gothic", "YuGothic", "Hiragino Kaku Gothic ProN", sans-serif;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        html {
+            scroll-behavior: smooth;
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: var(--font-main);
+            line-height: 2;
+            letter-spacing: 0.12em;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        body {
+            position: relative;
+            overflow-x: hidden;
+            background-image: 
+                linear-gradient(rgba(0, 0, 0, 0.015) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(0, 0, 0, 0.015) 1px, transparent 1px);
+            background-size: 40px 40px;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            top: 0; left: 0; width: 100vw; height: 100vh;
+            background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 200 200' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noiseFilter'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noiseFilter)' opacity='0.025'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 9999;
+        }
+
+        /* --- 2. Common Layout --- */
+        .container {
+            width: 100%;
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 0 8vw;
+        }
+
+        section {
+            padding: 160px 0;
+            position: relative;
+        }
+
+        .fade-in {
+            opacity: 0;
+            transform: translateY(40px);
+            filter: blur(4px);
+            transition: opacity 1.2s ease, transform 1.2s ease, filter 1.2s ease;
+        }
+        .fade-in.active {
+            opacity: 1;
+            transform: translateY(0);
+            filter: blur(0);
+        }
+
+        /* --- 3. Typography --- */
+        .section-title {
+            font-size: 2rem;
+            margin-bottom: 80px;
+            font-weight: 500;
+            display: inline-block;
+            position: relative;
+            letter-spacing: 0.1em;
+        }
+
+        .section-title::after {
+            content: " .";
+            color: var(--accent-line);
+            font-size: 3rem;
+            position: absolute;
+            bottom: 4px;
+            right: -20px;
+            line-height: 0;
+        }
+
+        /* --- 4. Header & Navigation --- */
+        header {
+            position: fixed;
+            top: 0; left: 0; width: 100%;
+            padding: 25px 8vw;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            z-index: 1000;
+            background-color: var(--bg-color-rgba);
+            backdrop-filter: blur(8px);
+            -webkit-backdrop-filter: blur(8px);
+            border-bottom: 1px solid rgba(0, 0, 0, 0.02);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-decoration: none;
+            letter-spacing: 0.03em;
+            line-height: 1;
+        }
+
+        .logo-icon {
+            width: 24px;
+            height: auto;
+            filter: brightness(0) contrast(100%);
+            object-fit: contain;
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 40px;
+        }
+
+        nav a {
+            text-decoration: none;
+            color: var(--text-color);
+            font-size: 0.75rem;
+            font-weight: 500;
+            letter-spacing: 0.15em;
+            transition: color 0.3s;
+        }
+        nav a:hover {
+            color: var(--text-muted);
+        }
+
+        /* --- 5. TOP Section --- */
+        #top {
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            position: relative;
+        }
+
+        .top-hero-box {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+        }
+
+        .top-logo-image {
+            width: 320px;
+            height: auto;
+            display: block;
+            pointer-events: none;
+            filter: brightness(0) contrast(100%);
+        }
+
+        .scroll-hint {
+            position: absolute;
+            bottom: 60px;
+            left: 50%;
+            transform: translateX(-50%);
+            font-size: 0.75rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 15px;
+            letter-spacing: 0.15em;
+        }
+        
+        .scroll-hint::after {
+            content: "";
+            width: 1px; height: 40px;
+            background-color: var(--text-muted);
+            display: block;
+        }
+
+        /* --- 6. MOVIES Section --- */
+        .movie-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 100px 60px;
+        }
+
+        .movie-item:nth-child(odd) {
+            transform: translateY(50px);
+        }
+
+        .movie-link {
+            display: block;
+            text-decoration: none;
+            color: inherit;
+        }
+
+        .thumbnail-container {
+            position: relative;
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            background-color: #eae9e5;
+            overflow: hidden;
+            margin-bottom: 20px;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.03);
+        }
+
+        .thumbnail-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            filter: grayscale(20%);
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1), filter 0.8s;
+        }
+
+        .movie-link:hover .thumbnail-container img {
+            transform: scale(1.02);
+            filter: grayscale(0%);
+        }
+
+        .movie-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: baseline;
+            padding: 0 4px;
+        }
+
+        .movie-name {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .movie-date {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            font-weight: 400;
+        }
+
+        /* --- 7. ABOUT Section --- */
+        .about-wrapper {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 100px;
+        }
+
+        .about-box {
+            font-size: 0.85rem;
+            text-align: justify;
+            line-height: 2.2;
+        }
+
+        .about-box.jp {
+            font-weight: 300;
+        }
+
+        .about-box p {
+            margin-bottom: 30px;
+        }
+
+        .about-box.en {
+            color: var(--text-muted);
+            font-weight: 400;
+            letter-spacing: 0.08em;
+        }
+
+        /* --- 8. LINKS Section --- */
+        .links-list {
+            list-style: none;
+            max-width: 500px;
+        }
+
+        .links-list li {
+            border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+        }
+
+        .menu-link {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 25px 0;
+            text-decoration: none;
+            color: inherit;
+            transition: padding-left 0.3s ease;
+        }
+
+        .menu-link:hover {
+            padding-left: 10px;
+        }
+
+        .link-label {
+            font-size: 1.05rem;
+            font-weight: 500;
+        }
+
+        .link-url {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            letter-spacing: 0.05em;
+            font-weight: 400;
+        }
+
+        /* --- 9. Footer --- */
+        footer {
+            padding: 120px 0 60px;
+            text-align: center;
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            letter-spacing: 0.1em;
+            font-weight: 400;
+        }
+
+        /* --- 10. Responsive --- */
+        @media (max-width: 768px) {
+            header {
+                padding: 20px 6vw;
+            }
+            nav ul {
+                gap: 20px;
+            }
+            section {
+                padding: 100px 0;
+            }
+            .top-logo-image {
+                width: 220px;
+            }
+            .movie-grid {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+            .movie-item:nth-child(odd) {
+                transform: translateY(0);
+            }
+            .about-wrapper {
+                grid-template-columns: 1fr;
+                gap: 60px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <a href="#" class="logo">
+            <img src="image.png" alt="" class="logo-icon">
+            Cosmola
+        </a>
+        <nav>
+            <ul>
+                <li><a href="#movies">MOVIES</a></li>
+                <li><a href="#about">ABOUT</a></li>
+                <li><a href="#links">LINKS</a></li>
+            </ul>
+        </nav>
+    </header>
+
+    <main class="container">
+        <section id="top">
+            <div class="top-hero-box">
+                <img src="image.png" alt="Cosmola Logo" class="top-logo-image">
+            </div>
+            <div class="scroll-hint">SCROLL</div>
+        </section>
+
+        <section id="movies">
+            <h2 class="section-title fade-in">Movies</h2>
+            <div class="movie-grid">
+                
+                <div class="movie-item fade-in">
+                    <a href="https://youtu.be/5MKTHnYW-5c" target="_blank" class="movie-link">
+                        <div class="thumbnail-container">
+                            <img src="https://img.youtube.com/vi/5MKTHnYW-5c/maxresdefault.jpg" alt="夏が泡になって">
+                        </div>
+                        <div class="movie-meta">
+                            <span class="movie-name">夏が泡になって</span>
+                            <span class="movie-date">2025</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="movie-item fade-in">
+                    <a href="https://youtu.be/P-oefu3LUBo" target="_blank" class="movie-link">
+                        <div class="thumbnail-container">
+                            <img src="https://img.youtube.com/vi/P-oefu3LUBo/maxresdefault.jpg" alt="時間旅行">
+                        </div>
+                        <div class="movie-meta">
+                            <span class="movie-name">時間旅行</span>
+                            <span class="movie-date">2025</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="movie-item fade-in">
+                    <a href="https://youtu.be/IYKufzuH1U8" target="_blank" class="movie-link">
+                        <div class="thumbnail-container">
+                            <img src="https://img.youtube.com/vi/IYKufzuH1U8/maxresdefault.jpg" alt="雪が溶けても">
+                        </div>
+                        <div class="movie-meta">
+                            <span class="movie-name">雪が溶けても</span>
+                            <span class="movie-date">2024</span>
+                        </div>
+                    </a>
+                </div>
+
+                <div class="movie-item fade-in">
+                    <a href="https://youtu.be/fopMJkR7His" target="_blank" class="movie-link">
+                        <div class="thumbnail-container">
+                            <img src="https://img.youtube.com/vi/fopMJkR7His/maxresdefault.jpg" alt="あの夏のせい">
+                        </div>
+                        <div class="movie-meta">
+                            <span class="movie-name">あの夏のせい</span>
+                            <span class="movie-date">2024</span>
+                        </div>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+
+        <section id="about">
+            <h2 class="section-title fade-in">About</h2>
+            <div class="about-wrapper fade-in">
+                <div class="about-box jp">
+                    <p>2024年より始動した、鳥井奏志による音楽プロジェクト「Cosmola」。</p>
+                    <p>京都を拠点に活動。</p>
+                    <p>ポップスを基盤に、矛盾や拙さを抱えたままの感情を音楽へ落とし込む。</p>
+                    <p>キャッチーなメロディと、繊細さと衝動が交差するサウンドを軸に、映像・アートワーク・イラストなども自身で制作。音とビジュアルの両面から作品を発表している。</p>
+                </div>
+                
+                <div class="about-box en">
+                    <p>Cosmola is a music project by Soushi Torii, launched in 2024 and based in Kyoto, Japan.</p>
+                    <p>Rooted in pop music, the project captures raw emotions, contradictions, and imperfections.</p>
+                    <p>Defined by catchy melodies mixed with delicate yet impulsive sounds.</p>
+                    <p>Torii writes the music and creates all visual elements, including video, artwork, and illustration, connecting sound and imagery as a single piece.</p>
+                </div>
+            </div>
+        </section>
+
+        <section id="links">
+            <h2 class="section-title fade-in">Links</h2>
+            <ul class="links-list fade-in">
+                <li>
+                    <a href="https://youtube.com/@cosmola_official" target="_blank" class="menu-link">
+                        <span class="link-label">YouTube</span>
+                        <span class="link-url">@cosmola_official</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.instagram.com/cosmola__official" target="_blank" class="menu-link">
+                        <span class="link-label">Instagram</span>
+                        <span class="link-url">@cosmola__official</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://x.com/cosmola_43" target="_blank" class="menu-link">
+                        <span class="link-label">X</span>
+                        <span class="link-url">@cosmola_43</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="https://www.tiktok.com/@cosmola4" target="_blank" class="menu-link">
+                        <span class="link-label">TikTok</span>
+                        <span class="link-url">@cosmola4</span>
+                    </a>
+                </li>
+                <li>
+                    <a href="mailto:cosmola43@gmail.com" class="menu-link">
+                        <span class="link-label">Mail</span>
+                        <span class="link-url">cosmola43@gmail.com</span>
+                    </a>
+                </li>
+            </ul>
+        </section>
+    </main>
+
+    <footer>
+        <p>&copy; Cosmola. All Rights Reserved.</p>
+    </footer>
+
+    <script>
+        const fadeElements = document.querySelectorAll('.fade-in');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('active');
+                }
+            });
+        }, { threshold: 0.1 });
+        fadeElements.forEach(el => observer.observe(el));
+    </script>
+</body>
+</html>
